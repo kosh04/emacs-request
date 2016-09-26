@@ -117,7 +117,7 @@ def run(port, server, **kwds):
     sys.stdout.flush()
 
     if server == 'flask':
-        app.run(port=port, **kwds)
+        app.run(debug=True, port=port, **kwds)
     else:
         app.debug = True
         from tornado.wsgi import WSGIContainer
