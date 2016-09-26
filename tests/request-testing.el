@@ -114,7 +114,18 @@ The symbols other than `response' is bound using `cl-symbol-macrolet'."
         (message "No server is running!"))))
   (setq request-testing-server--port nil)
   (setq request-testing-server--process nil))
-(add-hook 'kill-emacs-hook 'request-testing-stop-server)
+
+(defun request-testing-dump-server-log ()
+  (let ((process request-testing-server--process))
+    (when (processp process)
+      (let ((buffer (process-buffer process)))
+        (message "--- %S [status:%s] ---" buffer (process-status process))
+        (message "%s" (with-current-buffer buffer (buffer-string)))
+        (message "---")))))
+
+;; dump output before the server end
+(add-hook 'kill-emacs-hook 'request-testing-dump-server-log t)
+(add-hook 'kill-emacs-hook 'request-testing-stop-server t)
 
 (defun request-testing-url (&rest path)
   (cl-loop with url = (format "http://127.0.0.1:%s" request-testing-server--port)
